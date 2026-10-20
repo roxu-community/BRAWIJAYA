@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="BRAWIJAYA — Platform Penangkalan Siber: IDS/IPS, Threat Intelligence, Incident Response, Zero-Day Detection, dan Encryption Tool." />
+  <meta name="author" content="BRAWIJAYA Team" />
+  <title>BRAWIJAYA — Platform Penangkalan Siber</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+<div class="layout">
+  <div class="overlay" id="overlay"></div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <span class="brand-mark">◈</span>
+      <div>
+        <h1>BRAWIJAYA</h1>
+        <small>Defense Platform</small>
+      </div>
+    </div>
+    <nav>
+      <button data-view="dashboard" class="active"><span>▤</span> Dashboard</button>
+      <button data-view="ids"><span>◉</span> Smart IDS/IPS</button>
+      <button data-view="intel"><span>◎</span> Threat Intelligence</button>
+      <button data-view="soar"><span>⚙</span> Incident Response</button>
+      <button data-view="zeroday"><span>✧</span> Zero-Day Detection</button>
+      <button data-view="crypto"><span>🔒</span> Encryption Tool</button>
+    </nav>
+    <div class="sidebar-foot">
+      <div class="status"><span class="dot online"></span> Engine Aktif</div>
+      <small>v1.1 · Build 1.1</small>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger" id="hamburger" aria-label="Buka menu">☰</button>
+        <h2 id="page-title">Dashboard</h2>
+      </div>
+      <div class="topbar-right">
+        <span id="clock" class="mono"></span>
+        <button class="icon-btn" id="sound-toggle" title="Suara alert">🔔</button>
+        <button class="icon-btn" id="settings-btn" title="Pengaturan">⚙</button>
+        <span class="pill alert-pill">Threat: <b id="threat-level">—</b></span>
+      </div>
+    </header>
+
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" class="view active">
+      <div class="grid stats">
+        <div class="card stat"><div class="stat-label">Ancaman Aktif</div><div class="stat-value danger" id="stat-threats">0</div><div class="stat-sub">Alert status NEW</div></div>
+        <div class="card stat"><div class="stat-label">IP Diblokir</div><div class="stat-value" id="stat-blocked">0</div><div class="stat-sub">Total diblokir</div></div>
+        <div class="card stat"><div class="stat-label">Alert Hari Ini</div><div class="stat-value warn" id="stat-alerts">0</div><div class="stat-sub">Dari IDS engine</div></div>
+        <div class="card stat"><div class="stat-label">Playbook Tereksekusi</div><div class="stat-value ok" id="stat-playbooks">0</div><div class="stat-sub">Respons otomatis</div></div>
+      </div>
+      <div class="grid two-col">
+        <div class="card">
+          <div class="card-head"><h3>Live Alert Feed</h3><span class="badge live">● LIVE</span></div>
+          <ul id="dashboard-feed" class="feed"></ul>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Status Layanan</h3></div>
+          <ul class="service-list">
+            <li><span class="dot online"></span> Detection Engine <em>running</em></li>
+            <li><span class="dot online"></span> Alert Generator <em>ready</em></li>
+            <li><span class="dot online"></span> Local Storage <em>synced</em></li>
+            <li><span class="dot warn"></span> Network Sensor <em>standby</em></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- IDS -->
+    <section id="view-ids" class="view">
+      <div class="card">
+        <div class="card-head">
+          <h3>Smart IDS/IPS — Alert Stream</h3>
+          <div class="controls">
+            <input type="search" id="ids-search" placeholder="Cari IP / signature…" style="min-width:160px" />
+            <select id="ids-severity-filter">
+              <option value="all">Semua Severity</option>
+              <option value="kritis">Kritis</option>
+              <option value="tinggi">Tinggi</option>
+              <option value="sedang">Sedang</option>
+              <option value="rendah">Rendah</option>
+            </select>
+            <button id="ids-toggle" class="btn primary">▶ Mulai Simulasi</button>
+            <button id="ids-export" class="btn">⇩ Export</button>
+            <button id="ids-clear" class="btn ghost">Bersihkan</button>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table">
+            <thead>
+              <tr><th>Waktu</th><th>Severity</th><th>Signature</th><th>Source</th><th>Destination</th><th>Status</th><th>Aksi</th></tr>
+            </thead>
+            <tbody id="ids-tbody">
+              <tr class="empty"><td colspan="7">Belum ada alert. Klik "Mulai Simulasi".</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="hint" style="margin-top:12px">💡 Klik baris untuk melihat detail, menambah catatan, dan mengubah status.</p>
+      </div>
+      <div class="card">
+        <div class="card-head"><h3>Rule Management</h3></div>
+        <ul id="rules-list" class="rules"></ul>
+      </div>
+    </section>
+
+    <!-- INTEL -->
+    <section id="view-intel" class="view">
+      <div class="grid two-col">
+        <div class="card">
+          <div class="card-head"><h3>Pencarian IoC</h3></div>
+          <p class="hint">Cari IP, domain, atau hash pada feed intelijen.</p>
+          <div class="search-row">
+            <input id="ioc-input" type="text" placeholder="contoh: 185.220.101.45" />
+            <button id="ioc-search" class="btn primary">Cari</button>
+          </div>
+          <div id="ioc-result" class="result-box empty">Masukkan indikator untuk memulai pencarian.</div>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Tambah Indikator</h3></div>
+          <form id="ioc-form" class="form">
+            <label>Nilai IoC<input name="value" type="text" required placeholder="IP / domain / hash" /></label>
+            <label>Threat Score (0–100)<input name="score" type="number" min="0" max="100" required value="70" /></label>
+            <label>Tag (pisahkan koma)<input name="tags" type="text" placeholder="malware, c2" /></label>
+            <button class="btn primary" type="submit">Tambahkan ke Feed</button>
+          </form>
+          <div class="card-head" style="margin-top:16px">
+            <h3>Feed Terbaru</h3>
+            <button id="intel-export" class="btn small">⇩ Export</button>
+          </div>
+          <ul id="intel-feed" class="feed"></ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOAR -->
+    <section id="view-soar" class="view">
+      <div class="grid two-col">
+        <div class="card"><div class="card-head"><h3>Playbook Respons Otomatis</h3></div><div id="playbooks" class="playbooks"></div></div>
+        <div class="card">
+          <div class="card-head"><h3>Execution Log</h3><button id="clear-log" class="btn ghost small">Reset</button></div>
+          <div id="soar-log" class="log mono"><div class="log-line muted">Menunggu eksekusi playbook…</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ZERODAY -->
+    <section id="view-zeroday" class="view">
+      <div class="card">
+        <div class="card-head"><h3>Zero-Day Detection — Anomaly Engine</h3></div>
+        <p class="hint">Model Isolation Forest memberi skor anomali pada tiap sampel trafik.</p>
+        <div class="zeroday-controls">
+          <label>Ambang Anomali: <b id="threshold-val">70</b><input id="threshold" type="range" min="30" max="95" value="70" /></label>
+          <button id="analyze-btn" class="btn primary">Analisis Sampel Trafik</button>
+        </div>
+        <div id="anomaly-chart" class="anomaly-chart"></div>
+        <div id="anomaly-summary" class="result-box empty">Klik tombol analisis untuk melihat hasil deteksi.</div>
+      </div>
+    </section>
+
+    <!-- CRYPTO -->
+    <section id="view-crypto" class="view">
+      <div class="grid two-col">
+        <div class="card">
+          <div class="card-head"><h3>Enkripsi / Dekripsi (AES-256-GCM)</h3></div>
+          <label class="form">Teks<textarea id="crypto-text" rows="4" placeholder="Tulis data sensitif di sini…"></textarea></label>
+          <label class="form">Password<input id="crypto-pass" type="password" placeholder="Kunci akan diturunkan via PBKDF2" /></label>
+          <div class="btn-row">
+            <button id="encrypt-btn" class="btn primary">🔒 Enkripsi</button>
+            <button id="decrypt-btn" class="btn">🔓 Dekripsi</button>
+          </div>
+          <label class="form">Hasil<textarea id="crypto-output" rows="4" class="mono" readonly></textarea></label>
+          <p class="hint">Salt & IV dibuat acak. Data tidak dikirim ke server.</p>
+        </div>
+        <div class="card">
+          <div class="card-head"><h3>Hash Generator</h3></div>
+          <label class="form">Teks<textarea id="hash-text" rows="4" placeholder="Masukkan teks untuk di-hash…"></textarea></label>
+          <label class="form">Algoritma<select id="hash-algo"><option>SHA-256</option><option>SHA-384</option><option>SHA-512</option></select></label>
+          <button id="hash-btn" class="btn primary">Generate Hash</button>
+          <label class="form">Hash<textarea id="hash-output" rows="3" class="mono" readonly></textarea></label>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal" id="modal-content"></div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toast-container"></div>
+
+<script src="js/app.js"></script>
+</body>
+</html>
